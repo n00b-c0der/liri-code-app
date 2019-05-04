@@ -1,5 +1,6 @@
 require("dotenv").config();
 var keys = require("./keys");
+var axios = require("axios");
 var Spotify = require('node-spotify-api');
 var spotifySearch = new Spotify(keys.spotify);
 var omdbKey = keys.omdb.api_key;
@@ -84,11 +85,14 @@ var concertThis = function(concertQuery) {
 	if(concertQuery === undefined) {
 		concertQuery = "OutKast";
 	}
+	
+	var url = "https://rest.bandsintown.com/artists/" + concertQuery + "/events?app_id=codingbootcamp";
+	console.log(url);
+	
 
 	// HTTP GET request
-	request("https://rest.bandsintown.com/artists/" + concertQuery + "/events?app_id=codingbootcamp", function(err, datetime, venue) {
-		console.log(datetime);
-		console.log(venue);
+	axios.get(url).then(function(response) {
+		console.log(response.data);
 	});
 }
 

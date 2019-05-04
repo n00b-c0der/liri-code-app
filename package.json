@@ -19,6 +19,7 @@
   "homepage": "https://github.com/n00b-c0der/liri-code-app#readme",
   "dependencies": {
     "axios": "^0.18.0",
+    "bandsintown-events": "^1.0.4",
     "dotenv": "^8.0.0",
     "moment": "^2.24.0",
     "node-spotify-api": "^1.1.1"
