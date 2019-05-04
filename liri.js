@@ -2,6 +2,7 @@ require("dotenv").config();
 var keys = require("./keys");
 var Spotify = require('node-spotify-api');
 var spotifySearch = new Spotify(keys.spotify);
+var omdbKey = keys.omdb.api_key;
 
 // node liri.js [ command ] [ query - optional ]
 var command = process.argv[2];
@@ -49,8 +50,10 @@ var movieThis = function(movieQuery) {
 		movieQuery = "mr nobody";
 	}
 
+	var omdbURL = 'http://www.omdbapi.com/?t=' + movieQuery + '&apikey=' + omdbKey + '&plot=short&tomatoes=true';
+
 	// HTTP GET request
-	request("http://www.omdbapi.com/?t=" + movieQuery + "&y=&plot=short&r=json", function(error, response, body) {
+	request(omdbURL, function(error, response, body) {
 	  if (!error && response.statusCode === 200) {
 	    console.log("* Title of the movie:         " + JSON.parse(body).Title);
 	    console.log("* Year the movie came out:    " + JSON.parse(body).Year);
@@ -58,7 +61,7 @@ var movieThis = function(movieQuery) {
 	    console.log("* Country produced:           " + JSON.parse(body).Country);
 	    console.log("* Language of the movie:      " + JSON.parse(body).Language);
 	    console.log("* Plot of the movie:          " + JSON.parse(body).Plot);
-	    console.log("* Actors in the movie:        " + JSON.parse(body).Actors);
+			console.log("* Actors in the movie:        " + JSON.parse(body).Actors);
 
 	    // For loop parses through Ratings object to see if there is a RT rating
 	    // 	--> and if there is, it will print it
