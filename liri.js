@@ -1,5 +1,7 @@
 require("dotenv").config();
-var keys = require("./keys.js");
+var keys = require("./keys");
+var Spotify = require('node-spotify-api');
+var spotifySearch = new Spotify(keys.spotify);
 
 // node liri.js [ command ] [ query - optional ]
 var command = process.argv[2];
@@ -7,17 +9,18 @@ var query = process.argv[3];
 
 var spotifyThisSong = function(trackQuery) {
 	// Load Spotify npm package
-	var spotify = require('spotify');
+	
 
 	// if no trackQuery is passed in, then we will be querying for this particular song
 	if(trackQuery === undefined) {
 		trackQuery = "the sign ace of base";
 	}
-
+		
 	// Spotify API request (if an object is returned, output the first search result's artist(s), song, preview link, and album)
-	spotify.search({ type: 'track', query: trackQuery }, function(error, data) {
-	    if(error) { // if error
-	        console.log('Error occurred: ' + error);
+	// spotify.search({ type: 'track', query: trackQuery }, function(error, data) {
+		spotifySearch.search({ type: 'track', query: trackQuery }, function(err, data) {
+	    if(err) { // if error
+	        console.log('Error occurred: ' + err);
 	    } else { // if no error
 	    	// For loop is for when a track has multiple artists
 				for(var i = 0; i < data.tracks.items[0].artists.length; i++) {
@@ -30,6 +33,7 @@ var spotifyThisSong = function(trackQuery) {
 				console.log("Song:         " + data.tracks.items[0].name);
 				console.log("Preview Link: " + data.tracks.items[0].preview_url);
 				console.log("Album:        " + data.tracks.items[0].album.name);
+				// console.log(data);
 	    }
 	 
 	 		
@@ -70,11 +74,28 @@ var movieThis = function(movieQuery) {
 	});
 }
 
+var concertThis = function(concertQuery) {
+	
+	var request = require("request");
+
+	if(concertQuery === undefined) {
+		concertQuery = "OutKast";
+	}
+
+	// HTTP GET request
+	request("https://rest.bandsintown.com/artists/" + concertQuery + "/events?app_id=codingbootcamp", function(err, datetime, venue) {
+		console.log(datetime);
+		console.log(venue);
+	});
+}
+
 // App functionality due to user input
 if(command === "spotify-this-song") {
 	spotifyThisSong(query);
 } else if(command === "movie-this") {
 	movieThis(query);
+} else if(command === "concert-this") {
+	concertThis(query);
 } else if(command === "do-what-it-says") {
 	// App functionality from file read / loads fs npm package
 	var fs = require("fs");
@@ -98,6 +119,8 @@ if(command === "spotify-this-song") {
 			spotifyThisSong(query);
 		} else if(command === "movie-this") {
 			movieThis(query);
+		} else if (command === "concert-this") {
+			concertThis(query);
 		} else { // Use case where the command is not recognized
 			console.log("Command from file is not a valid command! Please try again.")
 		}
